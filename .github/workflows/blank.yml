@@ -1,0 +1,29 @@
+name: Verify API
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  push:
+    branches:
+      - develop
+      - release/*
+  workflow_dispatch:
+env:
+  NODE_VERSION: 18.16.1
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.1
+          cache: ''
+          registry-url: 'https://npm.pkg.github.com'
+      - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # tag=v2.2.4
+      - run: echo "$(pnpm store path)"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_ENV
+      - name: Build
+        run: echo 'this is a build step'
